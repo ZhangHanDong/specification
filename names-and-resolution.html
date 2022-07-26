@@ -1,0 +1,918 @@
+
+
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>14. Names and Resolution &#8212; Ferrocene Language Specification</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/ferrocene.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="15. Ownership and Destruction" href="ownership-and-deconstruction.html" />
+    <link rel="prev" title="13. Attributes" href="attributes.html" />
+     
+    <link rel="icon" href="_static/favicon.svg" sizes="any" type="image/svg+xml" />
+
+  </head><body>
+<div class="wrapper">
+    <div class="sidebar">
+        <header>
+            <a href="index.html">
+                <img src="_static/ferrocene.svg" alt="Ferrocene logo">
+                <h1>Language Specification</h1>
+            </a>
+        </header>
+        <form action="search.html" method="get" class="side-search">
+            <input type="text" name="q" placeholder="Search...">
+            <button type="submit">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. -->
+        <path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"/>
+    </svg>
+</button>
+        </form>
+        <nav>
+            <label for="toggle-toctree" class="toggle">Toggle navigation</label>
+            <input type="checkbox" id="toggle-toctree">
+            <div class="toctree">
+                <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="general.html">1. General</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lexical-elements.html">2. Lexical Elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">3. Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types-and-traits.html">4. Types and Traits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patterns.html">5. Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expressions.html">6. Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="values-and-objects.html">7. Values and Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statements.html">8. Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">9. Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="associated-items.html">10. Associated Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementations.html">11. Implementations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generics.html">12. Generics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">13. Attributes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. Names and Resolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ownership-and-deconstruction.html">15. Ownership and Destruction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions-and-errors.html">16. Exceptions and Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concurrency.html">17. Concurrency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="program-structure-and-compilation.html">18. Program Structure and Compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unsafety.html">19. Unsafety</a></li>
+<li class="toctree-l1"><a class="reference internal" href="macros.html">20. Macros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ffi.html">21. FFI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendices:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">A. Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">B. Glossary</a></li>
+</ul>
+
+            </div>
+        </nav>
+    </div>
+    <div class="content">
+        <div class="page">
+            
+  <div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>You’re reading a draft of the Ferrocene Language Specification. Some parts
+of this document might be missing, incomplete or incorrect. Our aim is to
+have the specification ready by the end of 2022.</p>
+</div>
+<section id="names-and-resolution">
+<span id="fls-gdeyap4or1db"></span><h1><span class="section-number">14. </span>Names and Resolution<a class="headerlink" href="#names-and-resolution" title="Permalink to this heading">¶</a></h1>
+<p class="rubric">Syntax</p>
+<pre class="spec-syntax literal-block"><code class="docutils literal notranslate" id="syntax_name"><span class="pre">Name</span></code> ::=
+    <a class="reference internal" href="lexical-elements.html#syntax_identifier"><code class="docutils literal notranslate"><span class="pre">Identifier</span></code></a></pre>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_s79wluq3u5wv">14:1</span>
+An <a class="reference internal" href="glossary.html#term_entity">entity</a> is a <a class="reference internal" href="glossary.html#term_construct">construct</a> that can be referred to within a program by
+using a <a class="reference internal" href="glossary.html#term_path">path</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_yf5r11o1kevr">14:2</span>
+A <a class="reference internal" href="glossary.html#term_name">name</a> identifies an <a class="reference internal" href="glossary.html#term_entity">entity</a> within the program text.</p>
+<section id="visibility">
+<span id="fls-jdknpu3kf865"></span><h2><span class="section-number">14.1. </span>Visibility<a class="headerlink" href="#visibility" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Syntax</p>
+<pre class="spec-syntax literal-block"><code class="docutils literal notranslate" id="syntax_visibilitymodifier"><span class="pre">VisibilityModifier</span></code> ::=
+    <a class="reference internal" href="#syntax_cratepublicmodifier"><code class="docutils literal notranslate"><span class="pre">CratePublicModifier</span></code></a>
+  | <a class="reference internal" href="#syntax_selfpublicmodifier"><code class="docutils literal notranslate"><span class="pre">SelfPublicModifier</span></code></a>
+  | <a class="reference internal" href="#syntax_simplepathpublicmodifier"><code class="docutils literal notranslate"><span class="pre">SimplePathPublicModifier</span></code></a>
+  | <a class="reference internal" href="#syntax_simplepublicmodifier"><code class="docutils literal notranslate"><span class="pre">SimplePublicModifier</span></code></a>
+  | <a class="reference internal" href="#syntax_superpublicmodifier"><code class="docutils literal notranslate"><span class="pre">SuperPublicModifier</span></code></a>
+
+<code class="docutils literal notranslate" id="syntax_cratepublicmodifier"><span class="pre">CratePublicModifier</span></code> ::=
+    <strong class="spec-syntax-literal">pub</strong> <strong class="spec-syntax-literal">(</strong> <strong class="spec-syntax-literal">crate</strong> <strong class="spec-syntax-literal">)</strong>
+
+<code class="docutils literal notranslate" id="syntax_selfpublicmodifier"><span class="pre">SelfPublicModifier</span></code> ::=
+    <strong class="spec-syntax-literal">pub</strong> <strong class="spec-syntax-literal">(</strong> <strong class="spec-syntax-literal">self</strong> <strong class="spec-syntax-literal">)</strong>
+
+<code class="docutils literal notranslate" id="syntax_simplepathpublicmodifier"><span class="pre">SimplePathPublicModifier</span></code> ::=
+    <strong class="spec-syntax-literal">pub</strong> <strong class="spec-syntax-literal">(</strong> <strong class="spec-syntax-literal">in</strong> <a class="reference internal" href="#syntax_simplepath"><code class="docutils literal notranslate"><span class="pre">SimplePath</span></code></a> <strong class="spec-syntax-literal">)</strong>
+
+<code class="docutils literal notranslate" id="syntax_simplepublicmodifier"><span class="pre">SimplePublicModifier</span></code> ::=
+    <strong class="spec-syntax-literal">pub</strong>
+
+<code class="docutils literal notranslate" id="syntax_superpublicmodifier"><span class="pre">SuperPublicModifier</span></code> ::=
+    <strong class="spec-syntax-literal">pub</strong> <strong class="spec-syntax-literal">(</strong> <strong class="spec-syntax-literal">super</strong> <strong class="spec-syntax-literal">)</strong></pre>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_7kpepal8ghuj">14.1:1</span>
+<a class="reference internal" href="glossary.html#term_visibility">Visibility</a> is a property of <a class="reference internal" href="glossary.html#term_item">items</a> that determines which
+<a class="reference internal" href="glossary.html#term_module">modules</a> can refer to a <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_item">item</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_qo0itr5il1kk">14.1:2</span>
+<a class="reference internal" href="glossary.html#term_public_visibility">Public visibility</a> is a kind of <a class="reference internal" href="glossary.html#term_visibility">visibility</a> that allows for a <a class="reference internal" href="glossary.html#term_name">name</a>
+to be referred to from arbitrary <a class="reference internal" href="glossary.html#term_module">module</a> <code class="docutils literal notranslate"><span class="pre">M</span></code> as long as the ancestor
+<a class="reference internal" href="glossary.html#term_module">modules</a> of the related <a class="reference internal" href="glossary.html#term_entity">entity</a> can be referred to from <code class="docutils literal notranslate"><span class="pre">M</span></code>.</p>
+<p><span class="spec-paragraph-id" id="fls_knjruq5wppv">14.1:3</span>
+<a class="reference internal" href="glossary.html#term_private_visibility">Private visibility</a> is a kind of <a class="reference internal" href="glossary.html#term_visibility">visibility</a> that allows a <a class="reference internal" href="glossary.html#term_name">name</a>
+to be referred to only by the current <a class="reference internal" href="glossary.html#term_module">module</a> of the <a class="reference internal" href="glossary.html#term_entity">entity</a>, and its
+descendant <a class="reference internal" href="glossary.html#term_module">modules</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_t7i4n19qdgn4">14.1:4</span>
+A <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> sets the <a class="reference internal" href="glossary.html#term_visibility">visibility</a> of the <a class="reference internal" href="glossary.html#term_name">name</a> of an
+<a class="reference internal" href="glossary.html#term_item">item</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_aa4f3rvir9lm">14.1:5</span>
+A <span class="spec-missing-ref">crate public modifier</span> is a <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> that grants a
+<a class="reference internal" href="glossary.html#term_name">name</a> <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> within the current <a class="reference internal" href="glossary.html#term_crate">crate</a> only.</p>
+<p><span class="spec-paragraph-id" id="fls_tnh7o3pb4e22">14.1:6</span>
+A <span class="spec-missing-ref">self public modifier</span> is a <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> that grants a
+<a class="reference internal" href="glossary.html#term_name">name</a> <a class="reference internal" href="glossary.html#term_private_visibility">private visibility</a>. A <span class="spec-missing-ref">self public modifier</span> is equivalent
+to a <a class="reference internal" href="glossary.html#term_simple_path_public_modifier">simple path public modifier</a> where the <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> denotes
+<a class="reference internal" href="glossary.html#term_keyword">keyword</a> <code class="docutils literal notranslate"><span class="pre">self</span></code>.</p>
+<p><span class="spec-paragraph-id" id="fls_yymgpyi67dty">14.1:7</span>
+A <a class="reference internal" href="glossary.html#term_simple_path_public_modifier">simple path public modifier</a> is a <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> that grants a
+<a class="reference internal" href="glossary.html#term_name">name</a> <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> within the provided <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> only.</p>
+<p><span class="spec-paragraph-id" id="fls_hc121mxknq03">14.1:8</span>
+The <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> of a <a class="reference internal" href="glossary.html#term_simple_path_public_modifier">simple path public modifier</a> shall start
+with a <span class="spec-missing-ref">simple path segment</span> expressed by either <a class="reference internal" href="glossary.html#term_keyword">keyword</a> <code class="docutils literal notranslate"><span class="pre">crate</span></code>,
+<a class="reference internal" href="glossary.html#term_keyword">keyword</a> <code class="docutils literal notranslate"><span class="pre">self</span></code>, or <a class="reference internal" href="glossary.html#term_keyword">keyword</a> <code class="docutils literal notranslate"><span class="pre">super</span></code>.</p>
+<p><span class="spec-paragraph-id" id="fls_icztzxjpm1du">14.1:9</span>
+The <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> of a <a class="reference internal" href="glossary.html#term_simple_path_public_modifier">simple path public modifier</a> shall resolve to
+an ancestor <a class="reference internal" href="glossary.html#term_module">module</a> of the current <a class="reference internal" href="glossary.html#term_module">module</a> or the current <a class="reference internal" href="glossary.html#term_module">module</a>
+itself.</p>
+<p><span class="spec-paragraph-id" id="fls_np8aghofjqhm">14.1:10</span>
+A <a class="reference internal" href="glossary.html#term_simple_public_modifier">simple public modifier</a> is a <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> that grants a
+<a class="reference internal" href="glossary.html#term_name">name</a> <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_quzvhzpr0124">14.1:11</span>
+A <a class="reference internal" href="glossary.html#term_super_public_modifier">super public modifier</a> is a <a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> that grants a
+<a class="reference internal" href="glossary.html#term_name">name</a> <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> within the parent <a class="reference internal" href="glossary.html#term_module">module</a> only. A <a class="reference internal" href="glossary.html#term_super_public_modifier">super
+public modifier</a> is equivalent to a <a class="reference internal" href="glossary.html#term_simple_path_public_modifier">simple path public modifier</a> where the
+<a class="reference internal" href="glossary.html#term_simple_path">simple path</a> denotes <a class="reference internal" href="glossary.html#term_keyword">keyword</a> <code class="docutils literal notranslate"><span class="pre">super</span></code>.</p>
+<p><span class="spec-paragraph-id" id="fls_utgjx6l5zwfl">14.1:12</span>
+An <span class="spec-missing-ref">external item</span>, a <span class="spec-missing-ref">field</span>, or an <a class="reference internal" href="glossary.html#term_item">item</a> that appears without a
+<a class="reference internal" href="glossary.html#term_visibility_modifier">visibility modifier</a> has <a class="reference internal" href="glossary.html#term_private_visibility">private visibility</a> by default.</p>
+<p><span class="spec-paragraph-id" id="fls_jifg2st5bfd6">14.1:13</span>
+An <a class="reference internal" href="glossary.html#term_associated_item">associated item</a> of a <a class="reference internal" href="glossary.html#term_trait">trait</a> with <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> has
+<a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> by default.</p>
+<p><span class="spec-paragraph-id" id="fls_dm0xr424ine1">14.1:14</span>
+An <a class="reference internal" href="glossary.html#term_enum_variant">enum variant</a> and its <span class="spec-missing-ref">fields</span> have the same <a class="reference internal" href="glossary.html#term_visibility">visibility</a> as the
+containing <a class="reference internal" href="glossary.html#term_enum_type">enum type</a>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">outer_module</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">inner_module</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span> <span class="nf">crate_visible_function</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">pub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span> <span class="nf">inner_module_visible_function</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">pub</span><span class="p">(</span><span class="k">super</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span> <span class="nf">outer_module_visible_function</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">visible_function</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">caller</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">crate_visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="n">inner_module_visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="n">visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">fn</span> <span class="nf">caller</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">inner_module</span>::<span class="n">crate_visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">inner_module</span>::<span class="n">outer_module_visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">inner_module</span>::<span class="n">visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">caller</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">outer_module</span>::<span class="n">inner_module</span>::<span class="n">crate_visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">outer_module</span>::<span class="n">inner_module</span>::<span class="n">visible_function</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="paths">
+<span id="fls-9i5msiuuyihf"></span><h2><span class="section-number">14.2. </span>Paths<a class="headerlink" href="#paths" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Syntax</p>
+<pre class="spec-syntax literal-block"><code class="docutils literal notranslate" id="syntax_simplepath"><span class="pre">SimplePath</span></code> ::=
+    <strong class="spec-syntax-literal">::</strong>? <a class="reference internal" href="#syntax_simplepathsegment"><code class="docutils literal notranslate"><span class="pre">SimplePathSegment</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="#syntax_simplepathsegment"><code class="docutils literal notranslate"><span class="pre">SimplePathSegment</span></code></a>)*
+
+<code class="docutils literal notranslate" id="syntax_simplepathlist"><span class="pre">SimplePathList</span></code> ::=
+    <a class="reference internal" href="#syntax_simplepath"><code class="docutils literal notranslate"><span class="pre">SimplePath</span></code></a> (<strong class="spec-syntax-literal">,</strong> <a class="reference internal" href="#syntax_simplepath"><code class="docutils literal notranslate"><span class="pre">SimplePath</span></code></a>)* <strong class="spec-syntax-literal">,</strong>?
+
+<code class="docutils literal notranslate" id="syntax_simplepathsegment"><span class="pre">SimplePathSegment</span></code> ::=
+    <a class="reference internal" href="lexical-elements.html#syntax_identifier"><code class="docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+  | <strong class="spec-syntax-literal">crate</strong>
+  | <strong class="spec-syntax-literal">$crate</strong>
+  | <strong class="spec-syntax-literal">self</strong>
+  | <strong class="spec-syntax-literal">super</strong>
+
+<code class="docutils literal notranslate" id="syntax_pathinexpression"><span class="pre">PathInExpression</span></code> ::=
+    <strong class="spec-syntax-literal">::</strong>? <a class="reference internal" href="#syntax_pathinexpressionsegment"><code class="docutils literal notranslate"><span class="pre">PathInExpressionSegment</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="#syntax_pathinexpressionsegment"><code class="docutils literal notranslate"><span class="pre">PathInExpressionSegment</span></code></a>)*
+
+<code class="docutils literal notranslate" id="syntax_pathinexpressionsegment"><span class="pre">PathInExpressionSegment</span></code> ::=
+    <a class="reference internal" href="#syntax_pathsegment"><code class="docutils literal notranslate"><span class="pre">PathSegment</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="generics.html#syntax_genericargumentlist"><code class="docutils literal notranslate"><span class="pre">GenericArgumentList</span></code></a>)?
+
+<code class="docutils literal notranslate" id="syntax_pathsegment"><span class="pre">PathSegment</span></code> ::=
+    <a class="reference internal" href="lexical-elements.html#syntax_identifier"><code class="docutils literal notranslate"><span class="pre">Identifier</span></code></a>
+  | <strong class="spec-syntax-literal">crate</strong>
+  | <strong class="spec-syntax-literal">$crate</strong>
+  | <strong class="spec-syntax-literal">self</strong>
+  | <strong class="spec-syntax-literal">Self</strong>
+  | <strong class="spec-syntax-literal">super</strong>
+
+<code class="docutils literal notranslate" id="syntax_typepath"><span class="pre">TypePath</span></code> ::=
+    <strong class="spec-syntax-literal">::</strong>? <a class="reference internal" href="#syntax_typepathsegment"><code class="docutils literal notranslate"><span class="pre">TypePathSegment</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="#syntax_typepathsegment"><code class="docutils literal notranslate"><span class="pre">TypePathSegment</span></code></a>)*
+
+<code class="docutils literal notranslate" id="syntax_typepathsegment"><span class="pre">TypePathSegment</span></code> ::=
+    <a class="reference internal" href="#syntax_pathsegment"><code class="docutils literal notranslate"><span class="pre">PathSegment</span></code></a> <strong class="spec-syntax-literal">::</strong>? (<a class="reference internal" href="generics.html#syntax_genericargumentlist"><code class="docutils literal notranslate"><span class="pre">GenericArgumentList</span></code></a> | <a class="reference internal" href="#syntax_typepathfn"><code class="docutils literal notranslate"><span class="pre">TypePathFn</span></code></a>)?
+
+<code class="docutils literal notranslate" id="syntax_typepathfn"><span class="pre">TypePathFn</span></code> ::=
+    <strong class="spec-syntax-literal">(</strong> <a class="reference internal" href="types-and-traits.html#syntax_typespecificationlist"><code class="docutils literal notranslate"><span class="pre">TypeSpecificationList</span></code></a>? <strong class="spec-syntax-literal">)</strong> <a class="reference internal" href="functions.html#syntax_returntype"><code class="docutils literal notranslate"><span class="pre">ReturnType</span></code></a>?
+
+<code class="docutils literal notranslate" id="syntax_qualifiedpathinexpression"><span class="pre">QualifiedPathInExpression</span></code> ::=
+    <a class="reference internal" href="#syntax_qualifiedpathtype"><code class="docutils literal notranslate"><span class="pre">QualifiedPathType</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="#syntax_pathinexpressionsegment"><code class="docutils literal notranslate"><span class="pre">PathInExpressionSegment</span></code></a>)+
+
+<code class="docutils literal notranslate" id="syntax_qualifiedpathtype"><span class="pre">QualifiedPathType</span></code> ::=
+    <strong class="spec-syntax-literal">&lt;</strong> <a class="reference internal" href="types-and-traits.html#syntax_typespecification"><code class="docutils literal notranslate"><span class="pre">TypeSpecification</span></code></a> <a class="reference internal" href="#syntax_typepathrenaming"><code class="docutils literal notranslate"><span class="pre">TypePathRenaming</span></code></a>? <strong class="spec-syntax-literal">&gt;</strong>
+
+<code class="docutils literal notranslate" id="syntax_typepathrenaming"><span class="pre">TypePathRenaming</span></code> ::=
+    <strong class="spec-syntax-literal">as</strong> <a class="reference internal" href="#syntax_typepath"><code class="docutils literal notranslate"><span class="pre">TypePath</span></code></a>
+
+<code class="docutils literal notranslate" id="syntax_qualifiedpathintype"><span class="pre">QualifiedPathInType</span></code> ::=
+    <a class="reference internal" href="#syntax_qualifiedpathtype"><code class="docutils literal notranslate"><span class="pre">QualifiedPathType</span></code></a> (<strong class="spec-syntax-literal">::</strong> <a class="reference internal" href="#syntax_typepathsegment"><code class="docutils literal notranslate"><span class="pre">TypePathSegment</span></code></a>)+</pre>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_klcltwcwrw6i">14.2:1</span>
+A <a class="reference internal" href="glossary.html#term_path">path</a> is a sequence of <a class="reference internal" href="glossary.html#term_path_segment">path segments</a> logically separated by
+<a class="reference internal" href="glossary.html#term_namespace_qualifier">namespace qualifier</a> <code class="docutils literal notranslate"><span class="pre">::</span></code> that resolves to a <a class="reference internal" href="glossary.html#term_name">name</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_pu0qwlmndtwf">14.2:2</span>
+A <a class="reference internal" href="glossary.html#term_path">path</a> that starts with qualifier <code class="docutils literal notranslate"><span class="pre">$crate</span></code> shall appear only within a
+<a class="reference internal" href="glossary.html#term_macro_transcriber">macro transcriber</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_8e03ie9p08ib">14.2:3</span>
+A <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> is a <a class="reference internal" href="glossary.html#term_path">path</a> whose <a class="reference internal" href="glossary.html#term_path_segment">path segments</a> consist of either
+<a class="reference internal" href="glossary.html#term_identifier">identifiers</a> or certain <a class="reference internal" href="glossary.html#term_keyword">keywords</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_hwxjhdx10xlm">14.2:4</span>
+A <a class="reference internal" href="glossary.html#term_global_path">global path</a> is a <a class="reference internal" href="glossary.html#term_path">path</a> that starts with <a class="reference internal" href="glossary.html#term_namespace_qualifier">namespace qualifier</a>
+<code class="docutils literal notranslate"><span class="pre">::</span></code>.</p>
+<p><span class="spec-paragraph-id" id="fls_ylkv4ut37v2m">14.2:5</span>
+A <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> is a constituent of a <a class="reference internal" href="glossary.html#term_path">path</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_uheh0jvg6yie">14.2:6</span>
+<strong>Should talk about the effects of a QualifiedPathType with respect to
+generics.</strong></p>
+<p><span class="spec-paragraph-id" id="fls_wv9anw30msgq">14.2:7</span>
+A <a class="reference internal" href="glossary.html#term_canonical_path">canonical path</a> is a <a class="reference internal" href="glossary.html#term_path">path</a> that fully qualifies a <a class="reference internal" href="glossary.html#term_name">name</a> starting
+from the current <a class="reference internal" href="glossary.html#term_crate">crate</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_tjwehd9ofzrj">14.2:8</span>
+The following <a class="reference internal" href="glossary.html#term_construct">constructs</a> do not have a <a class="reference internal" href="glossary.html#term_canonical_path">canonical path</a>:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_j5m34x689twd">14.2:9</span>
+<a class="reference internal" href="glossary.html#term_associated_item">Associated items</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_1s77w8eorw65">14.2:10</span>
+<a class="reference internal" href="glossary.html#term_implementation">Implementations</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_lt91iobkn6b4">14.2:11</span>
+<a class="reference internal" href="glossary.html#term_use_import">Use imports</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_6k0esdfp4nqs">14.2:12</span>
+<a class="reference internal" href="glossary.html#term_item">Items</a> declared in <a class="reference internal" href="glossary.html#term_block_expression">block expressions</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_7hr4d9gmnd2u">14.2:13</span>
+<a class="reference internal" href="glossary.html#term_item">Items</a> declared in a <a class="reference internal" href="glossary.html#term_module">module</a> where the <a class="reference internal" href="glossary.html#term_module">module</a> does not have a
+<a class="reference internal" href="glossary.html#term_canonical_path">canonical path</a>.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<p><span class="spec-paragraph-id" id="fls_cul31g1kkz5c">14.2:14</span>
+The following is a simple path. See <span class="spec-missing-ref"><em>Paragraph 14.2.</em></span> for the
+declaration of <code class="docutils literal notranslate"><span class="pre">crate_visible_function</span></code>.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">crate</span>::<span class="n">outer_module</span>::<span class="n">inner_module</span>::<span class="n">crate_visible_function</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_no853u27p4f3">14.2:15</span>
+The following is a path-in-expression.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="nb">Vec</span>::<span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span>::<span class="n">with_capacity</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_28c21rzc6rsp">14.2:16</span>
+The following is a path-in-type.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="n">std</span>::<span class="n">boxed</span>::<span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span><span class="w"> </span><span class="n">std</span>::<span class="n">ops</span>::<span class="nb">FnOnce</span><span class="p">(</span><span class="kt">isize</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">size</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">struct</span> <span class="nc">S</span><span class="p">;</span><span class="w"></span>
+<span class="k">impl</span><span class="w"> </span><span class="n">S</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">f</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;f of S&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">trait</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">f</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;f of T&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">impl</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">S</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_4s2n95h4rd1q">14.2:17</span>
+The following is a path-in-type. The call expression invokes T’s function.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">S</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span>::<span class="n">f</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_ojdntg5i79pb">14.2:18</span>
+<strong>Add an example for qualified path-in-expression.</strong></p>
+</section>
+<section id="use-imports">
+<span id="fls-9gprp17h6t1q"></span><h2><span class="section-number">14.3. </span>Use Imports<a class="headerlink" href="#use-imports" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Syntax</p>
+<pre class="spec-syntax literal-block"><code class="docutils literal notranslate" id="syntax_useimport"><span class="pre">UseImport</span></code> ::=
+    <strong class="spec-syntax-literal">use</strong> <a class="reference internal" href="#syntax_useimportcontent"><code class="docutils literal notranslate"><span class="pre">UseImportContent</span></code></a> <strong class="spec-syntax-literal">;</strong>
+
+<code class="docutils literal notranslate" id="syntax_useimportcontent"><span class="pre">UseImportContent</span></code> ::=
+    <a class="reference internal" href="#syntax_globimport"><code class="docutils literal notranslate"><span class="pre">GlobImport</span></code></a>
+  | <a class="reference internal" href="#syntax_nestingimport"><code class="docutils literal notranslate"><span class="pre">NestingImport</span></code></a>
+  | <a class="reference internal" href="#syntax_simpleimport"><code class="docutils literal notranslate"><span class="pre">SimpleImport</span></code></a>
+
+<code class="docutils literal notranslate" id="syntax_globimport"><span class="pre">GlobImport</span></code> ::=
+    <a class="reference internal" href="#syntax_simplepathprefix"><code class="docutils literal notranslate"><span class="pre">SimplePathPrefix</span></code></a>? <strong class="spec-syntax-literal">*</strong>
+
+<code class="docutils literal notranslate" id="syntax_nestingimport"><span class="pre">NestingImport</span></code> ::=
+    <a class="reference internal" href="#syntax_simplepathprefix"><code class="docutils literal notranslate"><span class="pre">SimplePathPrefix</span></code></a>? <strong class="spec-syntax-literal">{</strong> <a class="reference internal" href="#syntax_useimportcontentlist"><code class="docutils literal notranslate"><span class="pre">UseImportContentList</span></code></a>? <strong class="spec-syntax-literal">}</strong>
+
+<code class="docutils literal notranslate" id="syntax_simpleimport"><span class="pre">SimpleImport</span></code> ::=
+    <a class="reference internal" href="#syntax_simplepath"><code class="docutils literal notranslate"><span class="pre">SimplePath</span></code></a> <a class="reference internal" href="lexical-elements.html#syntax_renaming"><code class="docutils literal notranslate"><span class="pre">Renaming</span></code></a>?
+
+<code class="docutils literal notranslate" id="syntax_simplepathprefix"><span class="pre">SimplePathPrefix</span></code> ::=
+    <a class="reference internal" href="#syntax_simplepath"><code class="docutils literal notranslate"><span class="pre">SimplePath</span></code></a>? <strong class="spec-syntax-literal">::</strong>
+
+<code class="docutils literal notranslate" id="syntax_useimportcontentlist"><span class="pre">UseImportContentList</span></code> ::=
+    <a class="reference internal" href="#syntax_useimportcontent"><code class="docutils literal notranslate"><span class="pre">UseImportContent</span></code></a> (<strong class="spec-syntax-literal">,</strong> <a class="reference internal" href="#syntax_useimportcontent"><code class="docutils literal notranslate"><span class="pre">UseImportContent</span></code></a>)* <strong class="spec-syntax-literal">,</strong>?</pre>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_4qgflb8tsdo8">14.3:1</span>
+A <a class="reference internal" href="glossary.html#term_use_import">use import</a> brings <a class="reference internal" href="glossary.html#term_name">names</a> into <a class="reference internal" href="glossary.html#term_scope">scope</a> within the <a class="reference internal" href="glossary.html#term_module">module</a> or
+<a class="reference internal" href="glossary.html#term_block_expression">block expression</a> where the <a class="reference internal" href="glossary.html#term_use_import">use import</a> resides.</p>
+<p><span class="spec-paragraph-id" id="fls_xpn0gi2euo01">14.3:2</span>
+A <span class="spec-missing-ref">glob import</span> is a <a class="reference internal" href="glossary.html#term_use_import">use import</a> that brings all <a class="reference internal" href="glossary.html#term_name">names</a> with
+<a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> prefixed by its <a class="reference internal" href="glossary.html#term_path">path</a> prefix into <a class="reference internal" href="glossary.html#term_scope">scope</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_wln1ydrlaqy">14.3:3</span>
+A <span class="spec-missing-ref">glob import</span> shall contain a <a class="reference internal" href="glossary.html#term_simple_path">simple path</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_lahpu2vk6aqu">14.3:4</span>
+A <a class="reference internal" href="glossary.html#term_nesting_import">nesting import</a> is a <a class="reference internal" href="glossary.html#term_use_import">use import</a> that provides a common <a class="reference internal" href="glossary.html#term_path">path</a>
+prefix for its nested <a class="reference internal" href="glossary.html#term_use_import">use imports</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_t64jr6jd1723">14.3:5</span>
+A <span class="spec-missing-ref">simple import</span> is a <a class="reference internal" href="glossary.html#term_use_import">use import</a> that binds a <a class="reference internal" href="glossary.html#term_simple_path">simple path</a> to a
+local <a class="reference internal" href="glossary.html#term_name">name</a> by using an optional <a class="reference internal" href="glossary.html#term_renaming">renaming</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_w4s3ed1btre3">14.3:6</span>
+use self as foo -&gt; imports the current module under the name “foo”</p>
+<p><span class="spec-paragraph-id" id="fls_m233f57imu4a">14.3:7</span>
+use blah::{self} -&gt; imports “blah”</p>
+<p><span class="spec-paragraph-id" id="fls_9c50s1ivmox0">14.3:8</span>
+use blah::{self as foo} -&gt; imports blah under the name “foo”</p>
+<p><span class="spec-paragraph-id" id="fls_kk2jtk5ljm2t">14.3:9</span>
+use blah::gah::{self} -&gt; imports “gah”</p>
+<p><span class="spec-paragraph-id" id="fls_bwy2smwycrhd">14.3:10</span>
+use blah::{gah::{self as foo}} -&gt; imports gah under the name “foo”</p>
+<p><span class="spec-paragraph-id" id="fls_dd3ctnsrs1c9">14.3:11</span>
+<strong>The above imports the names in the type namespace only</strong></p>
+<p><span class="spec-paragraph-id" id="fls_se0ffyendc6n">14.3:12</span>
+When keyword <code class="docutils literal notranslate"><span class="pre">self</span></code> appears by itself in a use import, then the use import
+shall be a simple import with a renaming.</p>
+<p><span class="spec-paragraph-id" id="fls_3q7bw3hqnbo0">14.3:13</span>
+When keyword <code class="docutils literal notranslate"><span class="pre">crate</span></code></p>
+<p><span class="spec-paragraph-id" id="fls_htp8rum8mo5x">14.3:14</span>
+A <a class="reference internal" href="glossary.html#term_use_import">use import</a> with <a class="reference internal" href="glossary.html#term_public_visibility">public visibility</a> is said to <em id="term_re_export">re-export</em>
+imported <a class="reference internal" href="glossary.html#term_name">names</a>. <strong>What does this do exactly? What are the effects?</strong></p>
+<p class="rubric">Examples</p>
+<p><span class="spec-paragraph-id" id="fls_ajvmj1g2aj3q">14.3:15</span>
+The following is a glob import. See <span class="spec-missing-ref"><em>Paragraph 14.2.</em></span>
+for the declaration of modules and functions. The imported functions
+are <code class="docutils literal notranslate"><span class="pre">create_visible_function</span></code>, <code class="docutils literal notranslate"><span class="pre">outer_module_visible_function</span></code>,
+<code class="docutils literal notranslate"><span class="pre">visible_function</span></code>.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">outer_module</span>::<span class="n">inner_module</span>::<span class="o">*</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_1eckpji7yo32">14.3:16</span>
+The following is a renaming import. The imported function is
+<code class="docutils literal notranslate"><span class="pre">visible_function</span></code> under the name <code class="docutils literal notranslate"><span class="pre">f</span></code>.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">outer_module</span>::<span class="n">inner_module</span>::<span class="n">visible_function</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p><span class="spec-paragraph-id" id="fls_k78go91qxdtt">14.3:17</span>
+The following is a selective import. The imported functions are
+<code class="docutils literal notranslate"><span class="pre">crate_visible_function</span></code> and <code class="docutils literal notranslate"><span class="pre">visible_function</span></code>.</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="k">use</span><span class="w"> </span><span class="n">outer_module</span>::<span class="n">inner_module</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="n">crate_visible_function</span><span class="p">,</span><span class="w"> </span><span class="n">visible_function</span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="scopes">
+<span id="fls-izl8iuhoz9e0"></span><h2><span class="section-number">14.4. </span>Scopes<a class="headerlink" href="#scopes" title="Permalink to this heading">¶</a></h2>
+<p><span class="spec-paragraph-id" id="fls_k9fk1icjmxgs">14.4:1</span>
+<a class="reference external" href="https://github.com/rust-lang/reference/pull/1040/commits/77ab06c34e50e9cce04acf979a4402fa01ef48e9">Rust</a></p>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_5x5xykocwyiy">14.4:2</span>
+A <a class="reference internal" href="glossary.html#term_scope">scope</a> is a region of program text where a <a class="reference internal" href="glossary.html#term_name">name</a> can be referred to. A
+<a class="reference internal" href="glossary.html#term_name">name</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> when it can be referred to.</p>
+<p><span class="spec-paragraph-id" id="fls_ia3eeqrio5ur">14.4:3</span>
+<strong>How are hierarchies of scopes formed?</strong></p>
+<section id="associated-item-scope">
+<span id="fls-jnknu1xzrgh4"></span><h3><span class="section-number">14.4.1. </span>Associated Item Scope<a class="headerlink" href="#associated-item-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_27x1a6byib4b">14.4.1:1</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_associated_item">associated item</a> is never <a class="reference internal" href="glossary.html#term_in_scope">in scope</a>.</p>
+</section>
+<section id="binding-scopes">
+<span id="fls-4gh34bv0oii5"></span><h3><span class="section-number">14.4.2. </span>Binding Scopes<a class="headerlink" href="#binding-scopes" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_2gk77ytv88n7">14.4.2:1</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of a <span class="spec-missing-ref">closure parameter</span> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within the related
+<a class="reference internal" href="glossary.html#term_closure_body">closure body</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_8yyomyq38ony">14.4.2:2</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of a <a class="reference internal" href="glossary.html#term_function_parameter">function parameter</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within the
+related <a class="reference internal" href="glossary.html#term_function_body">function body</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_abk12gxkjddd">14.4.2:3</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of a <span class="spec-missing-ref">for loop</span> or a <span class="spec-missing-ref">while let loop</span> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a>
+within the related <span class="spec-missing-ref">loop body</span>.</p>
+<p><span class="spec-paragraph-id" id="fls_dm0b4sczajlj">14.4.2:4</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of an <a class="reference internal" href="glossary.html#term_if_let_expression">if let expression</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within the
+related <a class="reference internal" href="glossary.html#term_block_expression">block expression</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_3l9vcbay6obm">14.4.2:5</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of a <a class="reference internal" href="glossary.html#term_let_statement">let statement</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> after the related
+<a class="reference internal" href="glossary.html#term_let_statement">let statement</a> until the end of the <a class="reference internal" href="glossary.html#term_block_expression">block expression</a> where the related
+<a class="reference internal" href="glossary.html#term_let_statement">let statement</a> appears.</p>
+<p><span class="spec-paragraph-id" id="fls_dirjv2g18zuu">14.4.2:6</span>
+The <a class="reference internal" href="glossary.html#term_binding">binding</a> of a <a class="reference internal" href="glossary.html#term_match_arm">match arm</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within its related
+<a class="reference internal" href="glossary.html#term_expression">expressions</a> and related <a class="reference internal" href="glossary.html#term_match_arm_guard">match arm guard</a>.</p>
+</section>
+<section id="declarative-macro-scope">
+<span id="fls-x6wok0k52um2"></span><h3><span class="section-number">14.4.3. </span>Declarative Macro Scope<a class="headerlink" href="#declarative-macro-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_xbgri34o3zff">14.4.3:1</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_declarative_macro">declarative macro</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> after the related
+<span class="spec-missing-ref">macro rules</span> declaration until the end of the <a class="reference internal" href="glossary.html#term_block_expression">block expression</a> or the
+enclosing <a class="reference internal" href="glossary.html#term_module">module</a> where the <span class="spec-missing-ref">macro rules</span> declaration appears.</p>
+</section>
+<section id="generic-parameter-scope">
+<span id="fls-ftphlagzd2te"></span><h3><span class="section-number">14.4.4. </span>Generic Parameter Scope<a class="headerlink" href="#generic-parameter-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_pwuk2tyhrfpo">14.4.4:1</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_generic_parameter">generic parameter</a> of a <a class="reference internal" href="glossary.html#term_construct">construct</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a>
+within the related construct.</p>
+<p><span class="spec-paragraph-id" id="fls_uocarmzavgsk">14.4.4:2</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_generic_parameter">generic parameter</a> is not <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within
+<a class="reference internal" href="glossary.html#term_item">items</a> declared inside a <a class="reference internal" href="glossary.html#term_function">function</a>.</p>
+</section>
+<section id="item-scope">
+<span id="fls-bsypfus3olxu"></span><h3><span class="section-number">14.4.5. </span>Item Scope<a class="headerlink" href="#item-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_7aym7k1mtv5">14.4.5:1</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_item">item</a> declared within a <a class="reference internal" href="glossary.html#term_module">module</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a>
+within the related <a class="reference internal" href="glossary.html#term_module">module</a>. Such a <a class="reference internal" href="glossary.html#term_name">name</a> is not <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within
+nested <a class="reference internal" href="glossary.html#term_module">modules</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_l26n2qc5lmti">14.4.5:2</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_item">item</a> declared within a <a class="reference internal" href="glossary.html#term_block_expression">block expression</a> is <a class="reference internal" href="glossary.html#term_in_scope">in
+scope</a> within the related <a class="reference internal" href="glossary.html#term_block_expression">block expression</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_xjzmxub1bg8v">14.4.5:3</span>
+It is a static error to declare an <a class="reference internal" href="glossary.html#term_item">item</a> within a <a class="reference internal" href="glossary.html#term_block_expression">block expression</a> or
+a <a class="reference internal" href="glossary.html#term_module">module</a> where the <a class="reference internal" href="glossary.html#term_name">name</a> of the <a class="reference internal" href="glossary.html#term_item">item</a> is already used by another
+<a class="reference internal" href="glossary.html#term_item">item</a> within the same <a class="reference internal" href="glossary.html#term_block_expression">block expression</a> or <a class="reference internal" href="glossary.html#term_module">module</a>.</p>
+</section>
+<section id="lifetime-parameter-scope">
+<span id="fls-1oe31hyqcwmq"></span><h3><span class="section-number">14.4.6. </span>Lifetime Parameter Scope<a class="headerlink" href="#lifetime-parameter-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_46jak1bsujl4">14.4.6:1</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_lifetime_parameter">lifetime parameter</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within the related
+<a class="reference internal" href="glossary.html#term_implementation">implementation</a>, <a class="reference internal" href="glossary.html#term_function">function</a>, or <a class="reference internal" href="glossary.html#term_trait">trait</a>. (<strong>merge into Generic
+Parameter Scopes?</strong>)</p>
+<p><span class="spec-paragraph-id" id="fls_uhxkmj9y8l4z">14.4.6:2</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_lifetime_parameter">lifetime parameter</a> is not <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> in
+<a class="reference internal" href="glossary.html#term_constant">constants</a> and <a class="reference internal" href="glossary.html#term_static">statics</a>. (<strong>isn’t this redundant?</strong>)</p>
+</section>
+<section id="loop-label-scope">
+<span id="fls-euiehnmeugd"></span><h3><span class="section-number">14.4.7. </span>Loop Label Scope<a class="headerlink" href="#loop-label-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_bb6zwflhg91t">14.4.7:1</span>
+The <span class="spec-missing-ref">label</span> of a <a class="reference internal" href="glossary.html#term_loop_expression">loop expression</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> from its declaration
+until the end of the related <a class="reference internal" href="glossary.html#term_loop_expression">loop expression</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_i0c9ergp782r">14.4.7:2</span>
+The <span class="spec-missing-ref">label</span> of a <a class="reference internal" href="glossary.html#term_loop_expression">loop expression</a> is not <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> in <span class="spec-missing-ref">async
+blocks</span>, <span class="spec-missing-ref">closures</span>, <a class="reference internal" href="glossary.html#term_constant_argument">constant arguments</a>, <a class="reference internal" href="glossary.html#term_constant_context">constant contexts</a>,
+<a class="reference internal" href="glossary.html#term_item">items</a>, and the <span class="spec-missing-ref">iterator expression</span> of the related <span class="spec-missing-ref">for loop</span>.</p>
+</section>
+<section id="prelude-scopes">
+<span id="fls-n4enftia76e5"></span><h3><span class="section-number">14.4.8. </span>Prelude Scopes<a class="headerlink" href="#prelude-scopes" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_ri6pmto8jej3">14.4.8:1</span>
+<a class="reference internal" href="#term_prelude_name">Prelude names</a> are <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> of every <a class="reference internal" href="glossary.html#term_module">module</a>.</p>
+</section>
+<section id="self-scope">
+<span id="fls-kgbi26212eof"></span><h3><span class="section-number">14.4.9. </span><code class="docutils literal notranslate"><span class="pre">Self</span></code> Scope<a class="headerlink" href="#self-scope" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_2o0gn3xnjqel">14.4.9:1</span>
+The <span class="spec-missing-ref"><code class="docutils literal notranslate"><span class="pre">Self</span></code></span> <a class="reference internal" href="glossary.html#term_type">type</a> is <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> within <a class="reference internal" href="glossary.html#term_abstract_data_type">abstract data types</a>,
+<a class="reference internal" href="glossary.html#term_implementation">implementations</a>, and <a class="reference internal" href="glossary.html#term_trait">traits</a>.</p>
+</section>
+<section id="trait-bound-scopes">
+<span id="fls-kegoxt2k6t8l"></span><h3><span class="section-number">14.4.10. </span>Trait Bound Scopes<a class="headerlink" href="#trait-bound-scopes" title="Permalink to this heading">¶</a></h3>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_y86jxdq94wyg">14.4.10:1</span>
+<strong>Could you translate this (I never understood higher-ranked trait bounds)?</strong></p>
+<p><span class="spec-paragraph-id" id="fls_yxor2mvixvb1">14.4.10:2</span>
+The scope of a lifetime parameter declared as a [higher-ranked trait
+bound][hrtb] depends on the scenario where it is used.</p>
+<p><span class="spec-paragraph-id" id="fls_igo03vtzhzpu">14.4.10:3</span>
+As a [_TypeBoundWhereClauseItem_] the declared lifetimes are in scope in the
+type and the type bounds.</p>
+<p><span class="spec-paragraph-id" id="fls_9htct0x9nw0t">14.4.10:4</span>
+As a [_TraitBound_] the declared lifetimes are in scope within the bound type
+path.</p>
+<p><span class="spec-paragraph-id" id="fls_yhul6w8m9gnr">14.4.10:5</span>
+As a [_BareFunctionType_] the declared lifetimes are in scope within the
+function parameters and return type.</p>
+</section>
+</section>
+<section id="shadowing">
+<span id="fls-ydmnb7qnmzzq"></span><h2><span class="section-number">14.5. </span>Shadowing<a class="headerlink" href="#shadowing" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_w7d1sil7gh8z">14.5:1</span>
+<em id="term_shadowing">Shadowing</em> is a property of <a class="reference internal" href="glossary.html#term_name">names</a>. A <a class="reference internal" href="glossary.html#term_name">name</a> is said to be
+<em id="term_shadowed">shadowed</em> when another <a class="reference internal" href="glossary.html#term_name">name</a> with the same characters is introduced
+in the same <a class="reference internal" href="glossary.html#term_scope">scope</a> within the same <a class="reference internal" href="#term_namespace">namespace</a>, effectively hiding it. A
+<a class="reference internal" href="glossary.html#term_name">name</a> cannot be referred to by any means once it is <a class="reference internal" href="#term_shadowed">shadowed</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_ifrl9p79surf">14.5:2</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of <a class="reference internal" href="glossary.html#term_built_in_attribute">built-in attributes</a> shall not be <a class="reference internal" href="#term_shadowed">shadowed</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_jgs0q9seyx7g">14.5:3</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_generic_parameter">generic parameter</a> shall not be <a class="reference internal" href="#term_shadowed">shadowed</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_9kwknx9ycjcf">14.5:4</span>
+The <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_item">item</a> declared within a <a class="reference internal" href="glossary.html#term_module">module</a> may shadow a
+<a class="reference internal" href="#term_prelude_name">prelude name</a>. (<strong>is this rule needed?</strong>)</p>
+<p><span class="spec-paragraph-id" id="fls_3eekxbuih7wc">14.5:5</span>
+A <a class="reference internal" href="glossary.html#term_binding">binding</a> shall not shadow the <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_constant_parameter">constant parameter</a>,
+a <a class="reference internal" href="glossary.html#term_constant">constant</a>, an <span class="spec-missing-ref">enum constructor</span>, a <a class="reference internal" href="glossary.html#term_static">static</a>, or a <span class="spec-missing-ref">struct
+constructor</span>.</p>
+<p><span class="spec-paragraph-id" id="fls_5c7p3459gnn1">14.5:6</span>
+A <a class="reference internal" href="#term_prelude_name">prelude name</a> shadows other <a class="reference internal" href="#term_prelude_name">prelude names</a> depending on which
+<a class="reference internal" href="#term_prelude">preludes</a> are included in a <a class="reference internal" href="glossary.html#term_module">module</a>. The order of shadowing is as
+follows, where a later <a class="reference internal" href="#term_prelude_name">prelude name</a> shadows earlier <a class="reference internal" href="#term_prelude_name">prelude name</a>:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_c28gfhfk8gn4">14.5:7</span>
+<a class="reference internal" href="#term_language_prelude">Language prelude</a> <a class="reference internal" href="glossary.html#term_name">names</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_nyuutp3uvclb">14.5:8</span>
+<span class="spec-missing-ref">Standard library prelude</span> <a class="reference internal" href="glossary.html#term_name">names</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_mohwxdi59ouq">14.5:9</span>
+<a class="reference internal" href="#term_macro_use_prelude">macro_use prelude</a> <a class="reference internal" href="glossary.html#term_name">names</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_ogzke6s92qme">14.5:10</span>
+<span class="spec-missing-ref">Tool prelude</span> <a class="reference internal" href="glossary.html#term_name">names</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_qdyf00tq52p6">14.5:11</span>
+<a class="reference internal" href="#term_external_prelude">External prelude</a> <a class="reference internal" href="glossary.html#term_name">names</a>.</p></li>
+</ol>
+</section>
+<section id="namespaces">
+<span id="fls-dq403wq5yrs"></span><h2><span class="section-number">14.6. </span>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_8xbtcifiyvwh">14.6:1</span>
+A <em id="term_namespace">namespace</em> is a logical grouping of <a class="reference internal" href="glossary.html#term_name">names</a>. <a class="reference internal" href="glossary.html#term_name">Names</a> are
+segregated into separate <a class="reference internal" href="#term_namespace">namespaces</a> based on the kind of <a class="reference internal" href="glossary.html#term_entity">entity</a> the
+<a class="reference internal" href="glossary.html#term_name">name</a> belongs to. Within a <a class="reference internal" href="#term_namespace">namespace</a>, <a class="reference internal" href="glossary.html#term_name">names</a> are organized into a
+hierarchy of <a class="reference internal" href="glossary.html#term_scope">scopes</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_mt7qi7yh8y0n">14.6:2</span>
+A <a class="reference internal" href="#term_namespace">namespace</a> is classified as either an <span class="spec-missing-ref">anonymous namespace</span>, a
+<a class="reference internal" href="#term_label_namespace">label namespace</a>, a <a class="reference internal" href="#term_lifetime_namespace">lifetime namespace</a>, a <a class="reference internal" href="#term_macro_namespace">macro namespace</a>, a
+<a class="reference internal" href="#term_type_namespace">type namespace</a>, or a <a class="reference internal" href="#term_value_namespace">value namespace</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_swgq8k4wybdw">14.6:3</span>
+A <em id="term_label_namespace">label namespace</em> contains the <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_2mj3v7nwt58s">14.6:4</span>
+<span class="spec-missing-ref">Labels</span> of <a class="reference internal" href="glossary.html#term_loop_expression">loop expressions</a>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_thplejq7vwaw">14.6:5</span>
+A <em id="term_lifetime_namespace">lifetime namespace</em> contains the <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_32k27skptc8d">14.6:6</span>
+<a class="reference internal" href="glossary.html#term_lifetime_parameter">Lifetime parameters</a> of <span class="spec-missing-ref">generics</span>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_h5gkq5ghq9uw">14.6:7</span>
+A <em id="term_macro_namespace">macro namespace</em> contains the <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_riizlyw5thuy">14.6:8</span>
+<a class="reference internal" href="glossary.html#term_attribute_macro">Attribute macros</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_w8xdgosyjmp">14.6:9</span>
+<a class="reference internal" href="glossary.html#term_built_in_attribute">Built-in attributes</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_e83ifgq3vacf">14.6:10</span>
+<a class="reference internal" href="glossary.html#term_declarative_macro">Declarative macros</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_50hu7mljy17d">14.6:11</span>
+<a class="reference internal" href="glossary.html#term_derive_macro">Derive macros</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_268m2dicn4i1">14.6:12</span>
+<a class="reference internal" href="glossary.html#term_function_like_macro">Function-like macros</a>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_3z1xgyaoq85f">14.6:13</span>
+A <em id="term_type_namespace">type namespace</em> contains the <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_vg2e7fmqqk3g">14.6:14</span>
+<a class="reference internal" href="glossary.html#term_associated_type">Associated types</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_rnlz8c1uxsio">14.6:15</span>
+<span class="spec-missing-ref">Boolean types</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_lf5vqcip2qkp">14.6:16</span>
+<a class="reference internal" href="glossary.html#term_enum_type">Enum types</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_bum0cfgr0ov5">14.6:17</span>
+<a class="reference internal" href="glossary.html#term_enum_variant">Enum variants</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_4p2irc4i13dj">14.6:18</span>
+<span class="spec-missing-ref">External crate imports</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_w4idm2l370gn">14.6:19</span>
+<span class="spec-missing-ref">External crate prelude</span> <a class="reference internal" href="glossary.html#term_item">items</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_sjm0azadnp1u">14.6:20</span>
+<a class="reference internal" href="glossary.html#term_module">Modules</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_d8vpnauthd3">14.6:21</span>
+<a class="reference internal" href="glossary.html#term_numeric_type">Numeric types</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_b1dfiajmppfw">14.6:22</span>
+<span class="spec-missing-ref"><code class="docutils literal notranslate"><span class="pre">Self</span></code></span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_2r3x5vzckm31">14.6:23</span>
+<a class="reference internal" href="glossary.html#term_struct_type">Struct types</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_hbonb0a2h6p0">14.6:24</span>
+<a class="reference internal" href="glossary.html#term_textual_type">Textual types</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_et0rz4hgh9eg">14.6:25</span>
+<a class="reference internal" href="glossary.html#term_trait">Traits</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_tdpwgqehttlw">14.6:26</span>
+<span class="spec-missing-ref">Type aliases</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_ige8t79v0b74">14.6:27</span>
+<a class="reference internal" href="glossary.html#term_type_parameter">Type parameters</a> of generics.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_drtv1utvmmyo">14.6:28</span>
+<a class="reference internal" href="glossary.html#term_union_type">Union types</a>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_19ul1yb8mvg9">14.6:29</span>
+A <em id="term_value_namespace">value namespace</em> contains the <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_cq5kqtyh6kbk">14.6:30</span>
+<a class="reference internal" href="glossary.html#term_associated_constant">Associated constants</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_pttfh8f61bqn">14.6:31</span>
+<a class="reference internal" href="glossary.html#term_associated_function">Associated functions</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_sxmju66ot5mo">14.6:32</span>
+Captured <span class="spec-missing-ref">closure</span> <a class="reference internal" href="glossary.html#term_variable">variables</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_mhsfm533cwls">14.6:33</span>
+<a class="reference internal" href="glossary.html#term_constant">Constants</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_fu7jp3y2tu24">14.6:34</span>
+<a class="reference internal" href="glossary.html#term_constant_parameter">Constant parameters</a> of <span class="spec-missing-ref">generics</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_pi2tpb9376hk">14.6:35</span>
+<span class="spec-missing-ref">Enum variant constructors</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_ji94d3rqxcj3">14.6:36</span>
+<a class="reference internal" href="glossary.html#term_function">Functions</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_dwajteg2puz5">14.6:37</span>
+<span class="spec-missing-ref">Pattern bindings</span> of <span class="spec-missing-ref">closure parameters</span> for <a class="reference internal" href="glossary.html#term_loop_expression">loop
+expressions</a>, <a class="reference internal" href="glossary.html#term_function_parameter">function parameters</a>, <a class="reference internal" href="glossary.html#term_if_let_expression">if let expressions</a>,
+<a class="reference internal" href="glossary.html#term_let_statement">let statements</a>, <a class="reference internal" href="glossary.html#term_match_arm_matcher">match arm matchers</a>, and <a class="reference internal" href="glossary.html#term_while_let_loop_expression">while let loop
+expressions</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_vgjsg69igyqw">14.6:38</span>
+<span class="spec-missing-ref">Self constructors</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_bzmmqxhrsym">14.6:39</span>
+<a class="reference internal" href="glossary.html#term_static">Statics</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_hbthp73gfyyz">14.6:40</span>
+<span class="spec-missing-ref">Struct constructors</span>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_jhha0nr3vsgq">14.6:41</span>
+The <a class="reference internal" href="glossary.html#term_name">names</a> of the following entities are not part of any <a class="reference internal" href="#term_namespace">namespace</a>:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_dicnt0l6pite">14.6:42</span>
+<span class="spec-missing-ref">Enum fields</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_ocri7tm0duhg">14.6:43</span>
+<span class="spec-missing-ref">Struct fields</span>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_j4rmmu1opec8">14.6:44</span>
+<a class="reference internal" href="glossary.html#term_union_field">Union fields</a>.</p></li>
+</ul>
+</section>
+<section id="preludes">
+<span id="fls-c140hwzhup95"></span><h2><span class="section-number">14.7. </span>Preludes<a class="headerlink" href="#preludes" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_9bo3y5s1fxa1">14.7:1</span>
+A <em id="term_prelude">prelude</em> is a collection of <a class="reference internal" href="glossary.html#term_name">names</a> that are automatically brought
+<a class="reference internal" href="glossary.html#term_in_scope">in scope</a> of every <a class="reference internal" href="glossary.html#term_module">module</a> in a <a class="reference internal" href="glossary.html#term_crate">crate</a>. Such <a class="reference internal" href="glossary.html#term_name">names</a> are
+referred to as <em id="term_prelude_name">prelude names</em>.</p>
+<p><span class="spec-paragraph-id" id="fls_z33lxzlfb14t">14.7:2</span>
+The <em id="term_core_prelude">core prelude</em> is a <a class="reference internal" href="#term_prelude">prelude</a> that <strong>???</strong>.</p>
+<p><span class="spec-paragraph-id" id="fls_xqeud0y6tkds">14.7:3</span>
+An <em id="term_external_prelude">external prelude</em> is a <a class="reference internal" href="#term_prelude">prelude</a> that brings <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> of
+the <span class="spec-missing-ref">root module</span> the <a class="reference internal" href="glossary.html#term_name">names</a> of the <a class="reference internal" href="glossary.html#term_crate">crates</a> imported using
+<span class="spec-missing-ref">external crate imports</span>. If the <span class="spec-missing-ref">external crate import</span> uses a
+<a class="reference internal" href="glossary.html#term_renaming">renaming</a>, then the <a class="reference internal" href="glossary.html#term_renaming">renaming</a> is instead added to the <a class="reference internal" href="#term_external_prelude">external
+prelude</a>. The <span class="spec-missing-ref">core crate</span> is always added to the <a class="reference internal" href="#term_external_prelude">external prelude</a>
+unless the <a class="reference internal" href="glossary.html#term_crate_root">crate root</a> is subject to <a class="reference internal" href="glossary.html#term_attribute">attribute</a> <span class="spec-missing-ref"><code class="docutils literal notranslate"><span class="pre">no_core</span></code></span>.</p>
+<p><span class="spec-paragraph-id" id="fls_s7vhr3ipu9y">14.7:4</span>
+The <em id="term_language_prelude">language prelude</em> is a <a class="reference internal" href="#term_prelude">prelude</a> that brings <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> of every
+<a class="reference internal" href="glossary.html#term_module">module</a> the following <a class="reference internal" href="glossary.html#term_name">names</a>:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_up3442238u2u">14.7:5</span>
+<span class="spec-missing-ref">Boolean type</span> <a class="reference internal" href="glossary.html#codeterm_bool"><code class="docutils literal notranslate"><span class="pre">bool</span></code></a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_5ivqg3milcsx">14.7:6</span>
+<a class="reference internal" href="glossary.html#term_built_in_attribute">Built-in attributes</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_hcvdh0pbtckc">14.7:7</span>
+<a class="reference internal" href="glossary.html#term_floating_point_type">Floating-point types</a> <a class="reference internal" href="glossary.html#codeterm_f32"><code class="docutils literal notranslate"><span class="pre">f32</span></code></a> and <a class="reference internal" href="glossary.html#codeterm_f64"><code class="docutils literal notranslate"><span class="pre">f64</span></code></a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_7fg3erf8lm38">14.7:8</span>
+<a class="reference internal" href="glossary.html#term_integer_type">Integer types</a> <a class="reference internal" href="glossary.html#codeterm_i8"><code class="docutils literal notranslate"><span class="pre">i8</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_i16"><code class="docutils literal notranslate"><span class="pre">i16</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_i32"><code class="docutils literal notranslate"><span class="pre">i32</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_i64"><code class="docutils literal notranslate"><span class="pre">i64</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_i128"><code class="docutils literal notranslate"><span class="pre">i128</span></code></a>,
+<a class="reference internal" href="glossary.html#codeterm_isize"><code class="docutils literal notranslate"><span class="pre">isize</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_u8"><code class="docutils literal notranslate"><span class="pre">u8</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_u16"><code class="docutils literal notranslate"><span class="pre">u16</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_u32"><code class="docutils literal notranslate"><span class="pre">u32</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_u64"><code class="docutils literal notranslate"><span class="pre">u64</span></code></a>, <a class="reference internal" href="glossary.html#codeterm_u128"><code class="docutils literal notranslate"><span class="pre">u128</span></code></a>, and <a class="reference internal" href="glossary.html#codeterm_usize"><code class="docutils literal notranslate"><span class="pre">usize</span></code></a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_m1bb0dxgb0y0">14.7:9</span>
+<a class="reference internal" href="glossary.html#term_textual_type">Textual types</a> <a class="reference internal" href="glossary.html#codeterm_char"><code class="docutils literal notranslate"><span class="pre">char</span></code></a> and <a class="reference internal" href="glossary.html#codeterm_str"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>.</p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_7csxtbclebly">14.7:10</span>
+The <em id="term_macro_use_prelude">macro_use prelude</em> is a <a class="reference internal" href="#term_prelude">prelude</a> that brings <a class="reference internal" href="glossary.html#term_in_scope">in scope</a> of the
+<span class="spec-missing-ref">root module</span> the <a class="reference internal" href="glossary.html#term_name">names</a> of <a class="reference internal" href="glossary.html#term_macro">macros</a> from <span class="spec-missing-ref">external crates</span>
+that were imported using an <span class="spec-missing-ref">external crate import</span>.</p>
+<p class="rubric">Legality Rules</p>
+</section>
+<section id="name-resolution">
+<span id="fls-40xoego2thsp"></span><h2><span class="section-number">14.8. </span>Name Resolution<a class="headerlink" href="#name-resolution" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Legality Rules</p>
+<p><span class="spec-paragraph-id" id="fls_s8fa9sxj9dxe">14.8:1</span>
+<em id="term_name_resolution">Name resolution</em> is the process of relating a <a class="reference internal" href="glossary.html#term_path">path</a> to a <a class="reference internal" href="glossary.html#term_name">name</a> by
+considering <a class="reference internal" href="#term_namespace">namespaces</a>, <a class="reference internal" href="glossary.html#term_scope">scopes</a>, and <a class="reference internal" href="glossary.html#term_visibility">visibility</a>. A <a class="reference internal" href="glossary.html#term_path">path</a>
+that is successfully related to a <a class="reference internal" href="glossary.html#term_name">name</a> is said to be <em id="term_resolved">resolved</em>.</p>
+<p><span class="spec-paragraph-id" id="fls_ch2hhrbzqz2k">14.8:2</span>
+<em id="term_containment_name_resolution">Containment name resolution</em> is a kind of <a class="reference internal" href="#term_name_resolution">name resolution</a> that relates
+the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> of a <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> to a <a class="reference internal" href="glossary.html#term_name">name</a> that is expected to be
+defined in a given <a class="reference internal" href="glossary.html#term_module">module</a>, as follows:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_auzozbud012u">14.8:3</span>
+Make the <a class="reference internal" href="glossary.html#term_scope">scope</a> of the given <a class="reference internal" href="glossary.html#term_module">module</a> where the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>
+resides be the current <a class="reference internal" href="glossary.html#term_scope">scope</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_hcn2ac9rqzk">14.8:4</span>
+If the given <a class="reference internal" href="glossary.html#term_module">module</a> contains a <a class="reference internal" href="glossary.html#term_name">name</a> that matches the characters
+of the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>, then relate the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> to the matched
+<a class="reference internal" href="glossary.html#term_name">name</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_e2w6rf1eww6">14.8:5</span>
+Otherwise this is a static error.</p></li>
+</ol>
+<p><span class="spec-paragraph-id" id="fls_dxnbwhqyjlev">14.8:6</span>
+<em id="term_macro_name_resolution">Macro name resolution</em> is a kind of <a class="reference internal" href="#term_name_resolution">name resolution</a> that relates the
+<a class="reference internal" href="glossary.html#term_identifier">identifier</a> of a <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> to the <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_declarative_macro">declarative
+macro</a> as follows:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_o08avj1e2q5l">14.8:7</span>
+Make the <a class="reference internal" href="glossary.html#term_scope">scope</a> where the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> resides be the current
+<a class="reference internal" href="glossary.html#term_scope">scope</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_y4d9yecnjpll">14.8:8</span>
+While there is a current <a class="reference internal" href="glossary.html#term_scope">scope</a></p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_4tc9yagzdxwl">14.8:9</span>
+If the current <a class="reference internal" href="glossary.html#term_scope">scope</a> contains a <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_declarative_macro">declarative macro</a>
+that matches the characters of the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>, then</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_94fzpnkf579">14.8:10</span>
+Relate the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> to the matched <a class="reference internal" href="glossary.html#term_name">name</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_jv3v4dddhk63">14.8:11</span>
+Stop the <a class="reference internal" href="#term_macro_name_resolution">macro name resolution</a>.</p></li>
+</ol>
+</li>
+<li><p><span class="spec-paragraph-id" id="fls_8vhwna9f7ub0">14.8:12</span>
+Otherwise make the current <a class="reference internal" href="glossary.html#term_scope">scope</a> be the enclosing <a class="reference internal" href="glossary.html#term_scope">scope</a> of the
+current <a class="reference internal" href="glossary.html#term_scope">scope</a>.</p></li>
+</ol>
+</li>
+<li><p><span class="spec-paragraph-id" id="fls_kxjlf6t8tuwn">14.8:13</span>
+If the <span class="spec-missing-ref">macro scope</span> contains a <a class="reference internal" href="glossary.html#term_name">name</a> of a <a class="reference internal" href="glossary.html#term_declarative_macro">declarative macro</a>
+that matches the characters of the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>, then relate the
+<a class="reference internal" href="glossary.html#term_identifier">identifier</a> to the matched <a class="reference internal" href="glossary.html#term_name">name</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_zh3nt3nwbblt">14.8:14</span>
+Otherwise this is a static error.</p></li>
+</ol>
+<p><span class="spec-paragraph-id" id="fls_8kq4piz1w2gx">14.8:15</span>
+<em id="term_nearest_enclosing_name_resolution">Nearest enclosing name resolution</em> is a kind of <a class="reference internal" href="#term_name_resolution">name resolution</a>
+that relates the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> of a <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> to a <a class="reference internal" href="glossary.html#term_name">name</a> that is
+expected to be declared in a given <a class="reference internal" href="#term_namespace">namespace</a>, as follows:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_yxrimll8as6d">14.8:16</span>
+Make the <a class="reference internal" href="glossary.html#term_scope">scope</a> of the given <a class="reference internal" href="#term_namespace">namespace</a> where the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>
+resides be the current <a class="reference internal" href="glossary.html#term_scope">scope</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_lnb9mlgyhz9f">14.8:17</span>
+While there is a current <a class="reference internal" href="glossary.html#term_scope">scope</a></p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_4g4375us47yb">14.8:18</span>
+If the current <a class="reference internal" href="glossary.html#term_scope">scope</a> contains a <a class="reference internal" href="glossary.html#term_name">name</a> that matches the characters
+of the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>, then</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_c225wy3moan2">14.8:19</span>
+Relate the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> to the matched <a class="reference internal" href="glossary.html#term_name">name</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_722t9zdg5dih">14.8:20</span>
+Stop the <a class="reference internal" href="#term_nearest_enclosing_name_resolution">nearest enclosing name resolution</a>.</p></li>
+</ol>
+</li>
+<li><p><span class="spec-paragraph-id" id="fls_2wag4633ktz1">14.8:21</span>
+Otherwise make the current <a class="reference internal" href="glossary.html#term_scope">scope</a> be the enclosing <a class="reference internal" href="glossary.html#term_scope">scope</a> of the
+current <a class="reference internal" href="glossary.html#term_scope">scope</a>.</p></li>
+</ol>
+</li>
+<li><p><span class="spec-paragraph-id" id="fls_xsqflv4vzsdv">14.8:22</span>
+If the <span class="spec-missing-ref">prelude scope</span> contains a <a class="reference internal" href="glossary.html#term_name">name</a> that matches the characters
+of the <a class="reference internal" href="glossary.html#term_identifier">identifier</a>, then relate the <a class="reference internal" href="glossary.html#term_identifier">identifier</a> to the matched
+<a class="reference internal" href="glossary.html#term_name">name</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_8ob8cwl8uqhc">14.8:23</span>
+Otherwise this is a static error.</p></li>
+</ol>
+<p><span class="spec-paragraph-id" id="fls_mnlz6v5ut9q2">14.8:24</span>
+<em id="term_type_name_resolution">Type name resolution</em> is a kind of <a class="reference internal" href="#term_name_resolution">name resolution</a> that relates the
+<a class="reference internal" href="glossary.html#term_identifier">identifier</a> of a <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> to a <a class="reference internal" href="glossary.html#term_name">name</a> that is expected to be
+declared in an <a class="reference internal" href="glossary.html#term_implementation">implementation</a> of a <a class="reference internal" href="glossary.html#term_type">type</a>, as follows:</p>
+<ul class="simple">
+<li><p><span class="spec-paragraph-id" id="fls_73rswlz0rkwk">14.8:25</span>
+<strong>Explain</strong></p></li>
+<li><p><span class="spec-paragraph-id" id="fls_zh70yix8fbvp">14.8:26</span>
+<strong>I can’t figure out how to hook this into the algorithm below</strong></p></li>
+</ul>
+<p><span class="spec-paragraph-id" id="fls_ydyjavnku9bg">14.8:27</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> consists of multiple <a class="reference internal" href="glossary.html#term_path_segment">path segments</a>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is
+resolved as follows:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_56e0pov11z3o">14.8:28</span>
+Make the first <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_yfarrr5cz8zg">14.8:29</span>
+Perform <a class="reference internal" href="#term_nearest_enclosing_name_resolution">nearest enclosing name resolution</a>, where the <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>
+is the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> and the <a class="reference internal" href="#term_namespace">namespace</a> is the <a class="reference internal" href="#term_type_namespace">type
+namespace</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_4m7tv3tyizv0">14.8:30</span>
+If the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> did not resolve to a <a class="reference internal" href="glossary.html#term_module">module</a>, then this
+is a static error.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_oxjlvkxt08ey">14.8:31</span>
+Make the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the previous <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_nkv9qmwz32rj">14.8:32</span>
+Make the next <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_nzs8j9kivsw4">14.8:33</span>
+While the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> is not the last <a class="reference internal" href="glossary.html#term_path_segment">path segment</a></p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_fz70hv7pzpzx">14.8:34</span>
+Perform <a class="reference internal" href="#term_containment_name_resolution">containment name resolution</a>, where the <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> is
+the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> and the <a class="reference internal" href="glossary.html#term_module">module</a> is the <a class="reference internal" href="glossary.html#term_module">module</a> that
+the previous path segment resolved to.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_6eya9q7jir3k">14.8:35</span>
+If the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> did not resolve to a <a class="reference internal" href="glossary.html#term_module">module</a>, then
+this is a static error.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_min9nnblcc7g">14.8:36</span>
+Make the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the previous <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_4smxzvsncyp8">14.8:37</span>
+Make the next <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+</ol>
+</li>
+<li><p><span class="spec-paragraph-id" id="fls_pgepm7dqj9b4">14.8:38</span>
+Perform <a class="reference internal" href="#term_containment_name_resolution">containment name resolution</a>, where the <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> is the
+current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> and the <a class="reference internal" href="glossary.html#term_module">module</a> is the <a class="reference internal" href="glossary.html#term_module">module</a> that the
+previous <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> resolved to. (<strong>more?</strong>)</p></li>
+</ol>
+<p><span class="spec-paragraph-id" id="fls_gz9sxvudppg7">14.8:39</span>
+It is a static error if a <a class="reference internal" href="glossary.html#term_path">path</a> that consists of multiple <a class="reference internal" href="glossary.html#term_path_segment">path
+segments</a> cannot be related to a <a class="reference internal" href="glossary.html#term_name">name</a> of an <a class="reference internal" href="glossary.html#term_item">item</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_py6hxo1edqvo">14.8:40</span>
+A <a class="reference internal" href="glossary.html#term_global_path">global path</a> is resolved starting from the <a class="reference internal" href="#term_external_prelude">external prelude</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_vj7ctoj65ft">14.8:41</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> starts with qualifier <code class="docutils literal notranslate"><span class="pre">crate</span></code>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is resolved
+relative to the current <a class="reference internal" href="glossary.html#term_crate">crate</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_u70rq8qvont3">14.8:42</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> starts with qualifier <code class="docutils literal notranslate"><span class="pre">$crate</span></code>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is resolved
+relative to the <a class="reference internal" href="glossary.html#term_crate">crate</a> where the related <a class="reference internal" href="glossary.html#term_macro">macro</a> is declared.</p>
+<p><span class="spec-paragraph-id" id="fls_sfd92kxfe3o">14.8:43</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> starts with qualifier <code class="docutils literal notranslate"><span class="pre">self</span></code>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is resolved
+relative to the current <a class="reference internal" href="glossary.html#term_module">module</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_uqqqsrqyg9k8">14.8:44</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> starts with qualifier <code class="docutils literal notranslate"><span class="pre">Self</span></code>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is resolved
+relative to the <a class="reference internal" href="glossary.html#term_implementing_type">implementing type</a> within an <a class="reference internal" href="glossary.html#term_implementation">implementation</a> or a
+<a class="reference internal" href="glossary.html#term_trait">trait</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_q76k2ln276hw">14.8:45</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> starts with qualifier <code class="docutils literal notranslate"><span class="pre">super</span></code>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is resolved
+relative to the parent <a class="reference internal" href="glossary.html#term_module">module</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_yx78nuv60zdv">14.8:46</span>
+If a <a class="reference internal" href="glossary.html#term_path">path</a> consists of a single <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>, then the <a class="reference internal" href="glossary.html#term_path">path</a> is
+resolved as follows:</p>
+<ol class="arabic simple">
+<li><p><span class="spec-paragraph-id" id="fls_rxgorbvuujjn">14.8:47</span>
+Make the first <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> be the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>.</p></li>
+<li><p><span class="spec-paragraph-id" id="fls_dr5zn2g13x9l">14.8:48</span>
+Perform <a class="reference internal" href="#term_nearest_enclosing_name_resolution">nearest enclosing name resolution</a> where the <a class="reference internal" href="glossary.html#term_path_segment">path segment</a> is
+the current <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>, and the <a class="reference internal" href="#term_namespace">namespace</a> is <strong>which one???</strong>.</p></li>
+</ol>
+<p><span class="spec-paragraph-id" id="fls_4ldkkufsajm0">14.8:49</span>
+It is a static error if a <a class="reference internal" href="glossary.html#term_path">path</a> that consists of a single <a class="reference internal" href="glossary.html#term_path_segment">path segment</a>
+cannot be related to the <a class="reference internal" href="glossary.html#term_name">name</a> of a locally declared <a class="reference internal" href="glossary.html#term_item">item</a> or a locally
+declared <a class="reference internal" href="glossary.html#term_variable">variable</a>.</p>
+<p><span class="spec-paragraph-id" id="fls_wqrttnn5py4y">14.8:50</span>
+A <a class="reference internal" href="glossary.html#term_macro_invocation">macro invocation</a> is resolved using <a class="reference internal" href="#term_macro_name_resolution">macro name resolution</a>.</p>
+</section>
+</section>
+
+
+        </div>
+    </div>
+</div>
+<footer>
+    <p>
+        Copyright &copy; Critical Section GmbH.
+        
+            Contents released under the MIT or Apache 2.0 license.
+        
+    </p>
+    
+        <p>Built from commit: <code>272ad24f061a39993ffe1cb82f081660fb8e21fc</code></p>
+    
+    <p>Ferrocene is a registered trademark of Critical Section GmbH.</p>
+</footer>
+
+  </body>
+</html>
